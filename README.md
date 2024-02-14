@@ -48,3 +48,12 @@ Feel free to hack on the top of it
 * https://eips.ethereum.org/EIPS/eip-4906 
 
 * https://medium.com/quick-programming/how-to-implement-fully-on-chain-nft-contracts-8c409acc98b7 
+
+* https://docs.alchemy.com/docs/how-to-make-nfts-with-on-chain-metadata-hardhat-and-javascript
+* https://miningclub.medium.com/how-we-moved-nft-metadata-off-ipfs-and-into-the-smart-contract-59b5db822322
+* https://stackoverflow.com/questions/71626871/why-is-my-nft-metadata-not-showing-on-opensea
+* https://medium.com/coinmonks/how-to-create-on-chain-nfts-with-solidity-1e20ff9dd87e
+* https://forum.openzeppelin.com/t/onchain-nft-metadata-not-json-structure-tokenuri-is-not-showing-up-on-opensea/34932
+* https://ethereum.stackexchange.com/questions/124874/nft-metatdata-not-showing-on-opensea
+* https://www.reddit.com/r/ethdev/comments/v13sk1/how_to_store_metadata_on_nfts_on_chain_and_how/
+* https://www.kevfoo.com/2022/05/opensea-contracturi/
