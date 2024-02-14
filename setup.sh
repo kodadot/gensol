@@ -20,10 +20,10 @@ then
   echo "Initializing Foundry project..."
 
   # Initialize sample Foundry project
-  forge init --force --no-commit --quiet
+  forge init --force --no-commit
 
   # Install OpenZeppelin Contracts
-  forge install OpenZeppelin/openzeppelin-contracts@v5.0.1 --no-commit --quiet
+  forge install OpenZeppelin/openzeppelin-contracts@v5.0.1 --no-commit
 
   # Remove template contracts
   rm src/Counter.sol
@@ -39,7 +39,7 @@ then
 
   # Perform initial git commit
   git add .
-  git commit -m "openzeppelin: add wizard output" --quiet
+  git commit -m "openzeppelin: add wizard output"
 
   echo "Done."
 else
