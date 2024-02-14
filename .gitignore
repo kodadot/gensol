@@ -17,5 +17,3 @@ docs/
 .idea/
 .vscode/
 
-# Foundry libs
-lib/
