@@ -5,14 +5,14 @@ import "forge-std/Test.sol";
 import "../src/Generative.sol";
 
 contract GenerativeTest is Test {
-  Generative public instance;
+    Generative public instance;
 
-  function setUp() public {
-    address initialOwner = vm.addr(1);
-    instance = new Generative(initialOwner);
-  }
+    function setUp() public {
+        address initialOwner = vm.addr(1);
+        instance = new Generative(initialOwner, "Generative", "GEN");
+    }
 
-  function testName() public {
-    assertEq(instance.name(), "Generative");
-  }
+    function testName() public {
+        assertEq(instance.name(), "Generative");
+    }
 }

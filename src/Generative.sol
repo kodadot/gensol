@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     uint256 private _nextTokenId;
 
-    constructor(address initialOwner)
-        ERC721("Generative", "GENART")
+    constructor(address initialOwner, string memory name_, string memory symbol_)
+        ERC721(name_, symbol_)
         Ownable(initialOwner)
     {}
 
@@ -20,23 +20,29 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         _setTokenURI(tokenId, uri);
     }
 
-    // The following functions are overrides required by Solidity.
+    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        _requireOwned(tokenId);
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
+        string memory baseURI = _baseURI();
+        string memory name = name();
+        string memory json = string(
+            abi.encodePacked(
+                '{"name": "',
+                name,
+                " #",
+                Strings.toString(tokenId),
+                '", "description": "',
+                name,
+                ' is a generative collection minted by KodaDot.xyz", "image": "',
+                baseURI,
+                Strings.toString(tokenId),
+                '", "attributes": []}'
+            )
+        );
+        return json;
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
