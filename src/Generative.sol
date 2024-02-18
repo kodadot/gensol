@@ -67,7 +67,9 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     function safeMint(address to, string memory uri) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
+        // URI should be random hash generated from address to + tokenId + block.timestamp
+        string memory realURI = keccak256(abi.encodePacked(to, tokenId, block.timestamp)).toString();
+        _setTokenURI(tokenId, realURI);
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
