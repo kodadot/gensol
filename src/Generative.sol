@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-// import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     uint256 private _nextTokenId;
@@ -16,10 +16,13 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     // https://github.com/ProjectOpenSea/seadrop/blob/main/src/ERC721ContractMetadata.sol
     event MaxSupplyUpdated(uint256 newMaxSupply);
 
-    constructor(address initialOwner, string memory name_, string memory symbol_, string memory contractURI_, uint256 maxSupply_)
-        ERC721(name_, symbol_)
-        Ownable(initialOwner)
-    {
+    constructor(
+        address initialOwner,
+        string memory name_,
+        string memory symbol_,
+        string memory contractURI_,
+        uint256 maxSupply_
+    ) ERC721(name_, symbol_) Ownable(initialOwner) {
         // setContractURI(contractURI_);
         // setMaxSupply(maxSupply_);
         _contractURI = contractURI_;
@@ -41,7 +44,7 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         emit ContractURIUpdated(newURI);
     }
 
-        /**
+    /**
      * @notice Sets the max token supply and emits an event.
      *
      * @param newMaxSupply The new max supply to set.
@@ -70,22 +73,28 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
         _requireOwned(tokenId);
 
-        string memory baseURI = _baseURI();
-        string memory name = name();
-        string memory json = string(
+        // string memory baseURI = _baseURI();
+        // since ERC721URIStorage is the right most parent contract with function tokenURI()
+        string memory URI = super.tokenURI(tokenId);
+        string memory tokenURI = _tokenURIs[tokenId];
+        string memory name = string.concat(name(), " #", Strings.toString(tokenId));
+        string memory link = "kodadot.xyz";
+        string memory description = string.concat(name, " is a generative EVM art by ", link, " . Minted with hash", tokenURI);
+        string memory json = Base64.encode(
             abi.encodePacked(
                 '{"name": "',
                 name,
-                " #",
-                Strings.toString(tokenId),
                 '", "description": "',
-                name,
-                ' is a generative collection minted by KodaDot.xyz", "image": "',
-                baseURI,
-                Strings.toString(tokenId),
+                description,
+                '", "animation_url": "',
+                URI,
+                '", "image": "',
+                URI,
                 '", "attributes": []}'
             )
         );
+
+        string memory output = string(abi.encodePacked("data:application/json;base64,", json));
         return json;
     }
 
