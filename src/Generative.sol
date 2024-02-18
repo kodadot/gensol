@@ -78,10 +78,11 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         // string memory baseURI = _baseURI();
         // since ERC721URIStorage is the right most parent contract with function tokenURI()
         string memory URI = super.tokenURI(tokenId);
-        string memory tokenURI = _tokenURIs[tokenId];
+        // DEV: cannot access _tokenURIs directly will need workaround
+        // string memory _tokenURI = _tokenURIs[tokenId];
         string memory name = string.concat(name(), " #", Strings.toString(tokenId));
         string memory link = "kodadot.xyz";
-        string memory description = string.concat(name, " is a generative EVM art by ", link, " . Minted with hash", tokenURI);
+        string memory description = string.concat(name, " is a generative EVM art by ", link);
         string memory json = Base64.encode(
             abi.encodePacked(
                 '{"name": "',
