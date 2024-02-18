@@ -4,7 +4,7 @@ build:
 test:
   forge test
 
-format
+format:
   forge fmt
 
 deploy:
