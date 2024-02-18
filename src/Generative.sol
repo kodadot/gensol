@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     uint256 private _nextTokenId;
     string private _contractURI;
-    string private _baseURI;
+    string private _generatorURI;
     uint256 private _maxSupply;
 
     event ContractURIUpdated(string newContractURI);
@@ -27,13 +27,13 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     ) ERC721(name_, symbol_) Ownable(initialOwner) {
         // setContractURI(contractURI_);
         // setMaxSupply(maxSupply_);
-        _baseURI = baseURI_;
+        _generatorURI = baseURI_;
         _contractURI = contractURI_;
         _maxSupply = maxSupply_;
     }
 
     function _baseURI() internal view override returns (string memory) {
-        return _baseURI;
+        return _generatorURI;
     }
 
     // or e.g. "https://external-link-url.com/my-contract-metadata.json";
