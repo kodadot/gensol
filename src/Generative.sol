@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     uint256 private _nextTokenId;
     string private _contractURI;
+    string private _baseURI;
     uint256 private _maxSupply;
 
     event ContractURIUpdated(string newContractURI);
@@ -21,12 +22,18 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         string memory name_,
         string memory symbol_,
         string memory contractURI_,
+        string memory baseURI_,
         uint256 maxSupply_
     ) ERC721(name_, symbol_) Ownable(initialOwner) {
         // setContractURI(contractURI_);
         // setMaxSupply(maxSupply_);
+        _baseURI = baseURI_;
         _contractURI = contractURI_;
         _maxSupply = maxSupply_;
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return _baseURI;
     }
 
     // or e.g. "https://external-link-url.com/my-contract-metadata.json";
@@ -78,7 +85,7 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         // string memory baseURI = _baseURI();
         // since ERC721URIStorage is the right most parent contract with function tokenURI()
         string memory URI = super.tokenURI(tokenId);
-        // DEV: cannot access _tokenURIs directly will need workaround
+        /// @dev cannot access _tokenURIs directly will need workaround
         // string memory _tokenURI = _tokenURIs[tokenId];
         string memory name = string.concat(name(), " #", Strings.toString(tokenId));
         string memory link = "kodadot.xyz";
