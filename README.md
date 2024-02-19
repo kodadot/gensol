@@ -41,6 +41,8 @@ You can simulate a deployment by running the script:
 forge script script/Generative.s.sol
 ```
 
+* https://book.getfoundry.sh/tutorials/solidity-scripting
+
 See [Solidity scripting guide](https://book.getfoundry.sh/tutorials/solidity-scripting) for more information.
 
 ## Reading and resources
