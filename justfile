@@ -19,3 +19,7 @@ deploy:
    --constructor-args "Generative" "GEN" 'ipfs://' 'ipfs:\/\/' 2048  \
    --private-key $PRIVATE_KEY \
     src/Generative.sol:Generative
+
+abi:
+  @forge build --silent
+  @jq '.abi' ./out/Generative.sol/Generative.json > generative.json
