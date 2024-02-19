@@ -6,12 +6,15 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "./lib/GenStrings.sol";
 
 contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     uint256 private _nextTokenId;
     string private _contractURI;
     string private _generatorURI;
     uint256 private _maxSupply;
+
+    mapping(uint256 tokenId => string) private _tokenURIs;
 
     event ContractURIUpdated(string newContractURI);
     // https://github.com/ProjectOpenSea/seadrop/blob/main/src/ERC721ContractMetadata.sol
@@ -70,12 +73,12 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         // Emit an event with the update.
         emit MaxSupplyUpdated(newMaxSupply);
     }
-
-    function safeMint(address to, string memory uri) public onlyOwner {
+    // function safeMint(address to, string memory uri) public onlyOwner {
+    function safeMint(address to) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         // URI should be random hash generated from address to + tokenId + block.timestamp
-        string memory realURI = keccak256(abi.encodePacked(to, tokenId, block.timestamp)).toString();
+        string memory realURI = GenStrings.toHexString(keccak256(abi.encodePacked(to, tokenId, block.timestamp)));
         _setTokenURI(tokenId, realURI);
     }
 
