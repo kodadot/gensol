@@ -21,10 +21,16 @@ Written in Solidity, it is designed to be used with the Foundry framework.
 
 ### Libraries
 
-We use OpenZeppelin contracts for the ERC-721 implementation.
+We use [Immutable contracts](https://github.com/immutable/contracts) for the ERC-721 implementation.
 
 ```bash
-forge install OpenZeppelin/openzeppelin-contracts@v5.0.1 --no-commit
+forge install immutable-contracts=immutable/contracts@v2.2.3 --no-commit
+```
+
+They work only with [Solidity 0.8.19](https://docs.immutable.com/docs/zkevm/architecture/chain-differences/#evm-differences), So usable version of OpenZeppelin is `v4.9.3` latest is `v5.0.1`.
+
+```bash
+forge install OpenZeppelin/openzeppelin-contracts@v4.9.3 --no-commit
 ```
 
 ### Testing the contract
@@ -44,6 +50,14 @@ forge script script/Generative.s.sol
 * https://book.getfoundry.sh/tutorials/solidity-scripting
 
 See [Solidity scripting guide](https://book.getfoundry.sh/tutorials/solidity-scripting) for more information.
+
+## Dev hacks
+
+### Add library as a submodule
+
+```bash
+git submodule add <ssh_url_of_repo> lib/<name_of_the_lib>
+```
 
 ## Reading and resources
 
