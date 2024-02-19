@@ -20,6 +20,9 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     // https://github.com/ProjectOpenSea/seadrop/blob/main/src/ERC721ContractMetadata.sol
     event MaxSupplyUpdated(uint256 newMaxSupply);
 
+    // https://github.com/ProjectOpenSea/seadrop/blob/main/src/lib/ERC721SeaDropStructsErrorsAndEvents.sol
+    error MintQuantityExceedsMaxSupply(uint256 tokenId, uint256 maxSupply);
+
     constructor(
         address initialOwner,
         string memory name_,
@@ -61,22 +64,19 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
      */
     function setMaxSupply(uint256 newMaxSupply) external onlyOwner {
         // Ensure the sender is only the owner or contract itself.
-
-        // Ensure the max supply does not exceed the maximum value of uint64.
-        // if (newMaxSupply > 2**64 - 1) {
-        //     revert CannotExceedMaxSupplyOfUint64(newMaxSupply);
-        // }
-
-        // Set the new max supply.
         _maxSupply = newMaxSupply;
 
-        // Emit an event with the update.
         emit MaxSupplyUpdated(newMaxSupply);
     }
-    // function safeMint(address to, string memory uri) public onlyOwner {
 
+    // function safeMint(address to, string memory uri) public onlyOwner {
     function safeMint(address to) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
+
+        if (tokenId > _maxSupply) {
+            revert MintQuantityExceedsMaxSupply(tokenId, _maxSupply);
+        }
+
         _safeMint(to, tokenId);
         // URI should be random hash generated from address to + tokenId + block.timestamp
         string memory realURI = GenStrings.toHexString(keccak256(abi.encodePacked(to, tokenId, block.timestamp)));
