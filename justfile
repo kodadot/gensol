@@ -2,7 +2,7 @@ build:
   forge build
 
 test:
-  forge test
+  forge test -vv
 
 format:
   forge fmt
