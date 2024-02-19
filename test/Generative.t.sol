@@ -9,7 +9,12 @@ contract GenerativeTest is Test {
 
     function setUp() public {
         address initialOwner = vm.addr(1);
-        instance = new Generative(initialOwner, "Generative", "GEN");
+        string memory name = "Generative";
+        string memory symbol = "GEN";
+        string memory contractURI = "ipfs://";
+        string memory baseURI = "ipfs://"; // suffixed with /?hash=
+        uint256 maxSupply = 256;
+        instance = new Generative(initialOwner, name, symbol, contractURI, baseURI, maxSupply);
     }
 
     function testName() public {
