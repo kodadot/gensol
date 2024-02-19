@@ -3,37 +3,49 @@
 GenSOL is a ERC-721 contract for generative art.
 Written in Solidity, it is designed to be used with the Foundry framework.
 
-## Installing Foundry
+## Features
 
-See [Foundry installation guide](* https://book.getfoundry.sh/getting-started/installation).
+* On-chain metadata (base64 encoded JSON)
+* Ability to set maximum supply
+* Art is generated from **account + token ID + block number**
+* Contract URI
 
-## Initializing the project
+## Development
 
+> [!IMPORTANT]  
+> Last time I wrote a smart contract was in 2019. I am still learning new things in Solidity and code looks like a mess. I am open to any suggestions and improvements.
+
+### Prerequisites
+
+* [Foundry](https://book.getfoundry.sh/getting-started/installation)
+
+### Libraries
+
+We use OpenZeppelin contracts for the ERC-721 implementation.
+
+```bash
+forge install OpenZeppelin/openzeppelin-contracts@v5.0.1 --no-commit
 ```
-bash setup.sh
-```
 
-## Testing the contract
+### Testing the contract
 
-```
+```bash
 forge test
 ```
 
-## Deploying the contract
+### Deploying the contract
 
 You can simulate a deployment by running the script:
 
-```
+```bash
 forge script script/Generative.s.sol
 ```
 
 See [Solidity scripting guide](https://book.getfoundry.sh/tutorials/solidity-scripting) for more information.
 
-## Contributing
+## Reading and resources
 
-Feel free to hack on the top of it
-
-## Reading
+### Reading
 
 * https://blog.chain.link/how-to-create-generative-art-nfts/ 
 * https://fullyonchain.xyz 
