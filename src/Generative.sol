@@ -74,6 +74,7 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         emit MaxSupplyUpdated(newMaxSupply);
     }
     // function safeMint(address to, string memory uri) public onlyOwner {
+
     function safeMint(address to) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
@@ -108,7 +109,7 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         );
 
         string memory output = string(abi.encodePacked("data:application/json;base64,", json));
-        return json;
+        return output;
     }
 
     function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
