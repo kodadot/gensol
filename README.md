@@ -51,6 +51,8 @@ forge script script/Generative.s.sol
 
 See [Solidity scripting guide](https://book.getfoundry.sh/tutorials/solidity-scripting) for more information.
 
+* https://docs.immutable.com/docs/zkEVM/deploy-contracts/deploy#add-contract
+
 ## Dev hacks
 
 ### Add library as a submodule
