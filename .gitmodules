@@ -1,9 +1,9 @@
 [submodule "lib/forge-std"]
 	path = lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
-[submodule "lib/openzeppelin-contracts"]
-	path = lib/openzeppelin-contracts
-	url = https://github.com/OpenZeppelin/openzeppelin-contracts
 [submodule "lib/immutable-contracts"]
 	path = lib/immutable-contracts
 	url = git@github.com:immutable/contracts.git
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = git@github.com:OpenZeppelin/openzeppelin-contracts.git
