@@ -30,6 +30,7 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable, Operat
         string memory symbol_,
         string memory contractURI_,
         string memory baseURI_,
+        address operatorAllowlist_,
         uint256 maxSupply_
     ) ERC721(name_, symbol_) Ownable() {
         // setContractURI(contractURI_);
@@ -38,6 +39,10 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable, Operat
         _contractURI = contractURI_;
         _maxSupply = maxSupply_;
         transferOwnership(initialOwner);
+
+        if (operatorAllowlist_ != address(0)) {
+            _setOperatorAllowlistRegistry(operatorAllowlist_);
+        }
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -118,7 +123,12 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable, Operat
         super._burn(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage, OperatorAllowlistEnforced) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721URIStorage, OperatorAllowlistEnforced)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 }
