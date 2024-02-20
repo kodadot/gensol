@@ -6,9 +6,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "@imtbl/contracts/allowlist/OperatorAllowlistEnforced.sol";
 import "./lib/GenStrings.sol";
 
-contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
+contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable, OperatorAllowlistEnforced {
     uint256 private _nextTokenId;
     string private _contractURI;
     string private _generatorURI;
@@ -117,7 +118,7 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         super._burn(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage, OperatorAllowlistEnforced) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
