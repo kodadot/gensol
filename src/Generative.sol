@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -30,12 +30,13 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         string memory contractURI_,
         string memory baseURI_,
         uint256 maxSupply_
-    ) ERC721(name_, symbol_) Ownable(initialOwner) {
+    ) ERC721(name_, symbol_) Ownable() {
         // setContractURI(contractURI_);
         // setMaxSupply(maxSupply_);
         _generatorURI = baseURI_;
         _contractURI = contractURI_;
         _maxSupply = maxSupply_;
+        transferOwnership(initialOwner);
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -84,11 +85,11 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
-        _requireOwned(tokenId);
+        _requireMinted(tokenId);
 
         // string memory baseURI = _baseURI();
         // since ERC721URIStorage is the right most parent contract with function tokenURI()
-        string memory URI = super.tokenURI(tokenId);
+        string memory uri = super.tokenURI(tokenId);
         /// @dev cannot access _tokenURIs directly will need workaround
         // string memory _tokenURI = _tokenURIs[tokenId];
         string memory name = string.concat(name(), " #", Strings.toString(tokenId));
@@ -101,15 +102,19 @@ contract Generative is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
                 '", "description": "',
                 description,
                 '", "animation_url": "',
-                URI,
+                uri,
                 '", "image": "',
-                URI,
+                uri,
                 '", "attributes": []}'
             )
         );
 
         string memory output = string(abi.encodePacked("data:application/json;base64,", json));
         return output;
+    }
+
+    function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
