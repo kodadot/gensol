@@ -1,1 +1,2 @@
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
+@imtbl/contracts/=lib/imtbl-contracts/contracts/
