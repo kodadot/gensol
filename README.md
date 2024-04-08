@@ -41,6 +41,18 @@ You can simulate a deployment by running the script:
 forge script script/Generative.s.sol
 ```
 
+To deploy fully with a verification 
+
+
+```bash
+source .env;
+forge script script/BaseGen.s.sol:MyScript --rpc-url $RPC_URL --broadcast --verify -vvvv
+```
+
+> [!IMPORTANT]
+> You need to have a `.env` file with the `RPC_URL` variable set.
+> Do not forget to obtain ehterscan or basescan API key and set it in the `.env` file.
+
 * https://book.getfoundry.sh/tutorials/solidity-scripting
 
 See [Solidity scripting guide](https://book.getfoundry.sh/tutorials/solidity-scripting) for more information.
