@@ -70,6 +70,10 @@ contract BaseGen is ERC721, ERC721Burnable, Ownable {
         emit MaxSupplyUpdated(newMaxSupply);
     }
 
+    function totalSupply() public view returns (uint256) {
+        return _maxSupply;
+    }
+
     // function safeMint(address to, string memory uri) public onlyOwner {
     function safeMint(address to) public payable {
         uint256 tokenId = _nextTokenId++;
