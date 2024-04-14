@@ -19,15 +19,15 @@ contract BaseGenTest is Test {
         instance.safeMint{value: 0.01 ether}(initialOwner);
     }
 
-    function testName() public {
+    function testName() public view {
         assertEq(instance.name(), "Generative");
     }
 
-    function testContractUri() public {
+    function testContractUri() public view {
         assertEq(instance.contractURI(), "ipfs://");
     }
 
-    function testBaseUri() public {
+    function testBaseUri() public view {
         string memory baseUri = "https://data.kodadot.xyz/base/";
         string memory scAddress = Strings.toHexString(uint160(address(instance)), 20);
         string memory expected = string.concat(baseUri, scAddress, "/");
