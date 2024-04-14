@@ -16,7 +16,7 @@ contract BaseTokenGen is ERC721, ERC721Burnable, Ownable {
     uint256 private _maxSupply;
     IERC20 public token;
     // DEV: since our token is 18 decimals, we need to multiply by 1e18 and mint price 11 tokens
-    uint256 public pricePerMint = 11 ether; 
+    uint256 private _pricePerMint = 111 ether; 
     
     mapping(uint256 tokenId => string) private _tokenURIs;
 
@@ -80,6 +80,15 @@ contract BaseTokenGen is ERC721, ERC721Burnable, Ownable {
     function totalSupply() public view returns (uint256) {
         return _maxSupply;
     }
+
+    function pricePerMint() public view returns (uint256 price) {
+        price = _pricePerMint;
+    }
+
+    function setPricePerMint(uint256 newPrice) external onlyOwner {
+        _pricePerMint = newPrice;
+    }
+
     // function safeMint(address to, string memory uri) public onlyOwner {
     function safeMint(address to) public {
         uint256 tokenId = _nextTokenId++;
@@ -96,8 +105,8 @@ contract BaseTokenGen is ERC721, ERC721Burnable, Ownable {
         // } else {
         //     revert InsufficientFunds(tokenId, msg.value);
         // }
-        if (allowance >= pricePerMint) { 
-            bool sent = token.transferFrom(msg.sender, owner(), pricePerMint);
+        if (allowance >= _pricePerMint) { 
+            bool sent = token.transferFrom(msg.sender, owner(), _pricePerMint);
             require(sent, "Token transfer failed");
         } else {
             revert InsufficientFunds(tokenId, allowance);

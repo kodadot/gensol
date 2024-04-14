@@ -22,7 +22,8 @@ contract BaseTokenGenTest is Test {
         token = new Token("Token", "TKN");
         address tokenAddress = address(token);
         instance = new BaseTokenGen(next, name, symbol, contractURI, baseURI, maxSupply, tokenAddress);
-        token.approve(address(instance), 11 * 1e18);
+        token.approve(address(instance), 111 * 1e18);
+        // instance.setPricePerMint(11 ether); // onlyOwner!!!
         instance.safeMint(next);
         console2.log("Token deployed to %s", address(token));
         // instance.safeMint{value: 0.01 ether}(initialOwner);
@@ -30,6 +31,12 @@ contract BaseTokenGenTest is Test {
 
     function testName() public view {
         assertEq(instance.name(), "Generative");
+    }
+
+    function testPricePerMint() public view {
+        uint256 price = 11 ether;
+        uint256 pricePerMint = instance.pricePerMint();
+        assertEq(pricePerMint, price);
     }
 
     function testContractUri() public view {
