@@ -22,7 +22,7 @@ contract BaseTokenGenTest is Test {
         token = new Token("Token", "TKN");
         address tokenAddress = address(token);
         instance = new BaseTokenGen(next, name, symbol, contractURI, baseURI, maxSupply, tokenAddress);
-        token.approve(address(instance), 1 * 10 ** 18);
+        token.approve(address(instance), 11 * 1e18);
         instance.safeMint(next);
         console2.log("Token deployed to %s", address(token));
         // instance.safeMint{value: 0.01 ether}(initialOwner);
@@ -46,7 +46,7 @@ contract BaseTokenGenTest is Test {
 
     function testTokenSent() public view {
         address next = vm.addr(2);
-        assertEq(token.balanceOf(next), 1 * 10 ** 18);
+        assertEq(token.balanceOf(next), 11 ether);
     }
 
     function testTokenReceived() public view {
