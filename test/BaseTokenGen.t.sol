@@ -10,6 +10,7 @@ import "../src/Token.sol";
 contract BaseTokenGenTest is Test {
     BaseTokenGen public instance;
     Token public token;
+    uint256 private _pricePerMint = 111 ether;
 
     function setUp() public {
         // address initialOwner = vm.addr(1);
@@ -34,7 +35,7 @@ contract BaseTokenGenTest is Test {
     }
 
     function testPricePerMint() public view {
-        uint256 price = 11 ether;
+        uint256 price = _pricePerMint;
         uint256 pricePerMint = instance.pricePerMint();
         assertEq(pricePerMint, price);
     }
@@ -53,7 +54,7 @@ contract BaseTokenGenTest is Test {
 
     function testTokenSent() public view {
         address next = vm.addr(2);
-        assertEq(token.balanceOf(next), 11 ether);
+        assertEq(token.balanceOf(next), _pricePerMint);
     }
 
     function testTokenReceived() public view {
