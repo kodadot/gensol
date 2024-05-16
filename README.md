@@ -10,9 +10,44 @@ Written in Solidity, it is designed to be used with the Foundry framework.
 * Art is generated from **account + token ID + block number**
 * Contract URI
 
+## Contracts
+
+- `Generative.sol` - The main contract
+- `BaseGen.sol` - The base contract for generative art
+- `BaseTokenGen.sol` - The base contract but payable with ERC-20 tokens
+
+## How does it work?
+
+In case of `BaseGen.sol` we need to define a set of parameters (see `script/BaseGen.s.sol`)
+
+```solidity
+  address initialOwner = vm.addr(deployerPrivateKey);
+  string memory name = "Koda.";
+  string memory symbol = "KODA";
+  string memory contractURI = "ipfs://bafkreige4zmihk32by3n5aeoq7svlqeyhoaapt4l7hoyspsnr2hm7ljjgq";
+  string memory baseURI = "https://dyndata.deno.dev/base/content/"; 
+  uint256 maxSupply = 64;
+  address receiver = 0xE844b2a0a6453250c920BD2b4B7741946aB16C08;
+
+  BaseGen nft = new BaseGen(initialOwner, name, symbol, contractURI, baseURI, maxSupply, receiver);
+```
+
+As you may know from other NFT Galleries
+- `contractURI` is a link to [the contract metadata](https://docs.opensea.io/docs/contract-level-metadata)
+- `name` and `symbol` are from the [ERC-721 standard](https://eips.ethereum.org/EIPS/eip-721)
+- `baseURI` is a link to the [token metadata](https://docs.opensea.io/docs/metadata-standards)
+  - it is used to generate the `tokenURI` - `baseURI/address(this)/tokenId` - where `address(this)` is the contract address
+  - we leverage [vikiival/dyndata to generate the metadata](github.com/vikiival/dyndata)
+- `maxSupply` is the maximum number of tokens that can be minted
+- `receiver` is the address that will receive the funds from the minting
+
+> [!IMPORTANT]
+> The `receiver` address is a recipient of [5% royalties](https://eips.ethereum.org/EIPS/eip-2981)
+> Function `safeMint` is `payable` - you need to send 0.0015 ETH to mint a token
+
 ## Development
 
-> [!IMPORTANT]  
+> [!TIP]  
 > Last time I wrote a smart contract was in 2019. I am still learning new things in Solidity and code looks like a mess. I am open to any suggestions and improvements.
 
 ### Prerequisites
@@ -47,6 +82,12 @@ To deploy fully with a verification
 ```bash
 source .env;
 forge script script/BaseGen.s.sol:MyScript --rpc-url $RPC_URL --broadcast --verify -vvvv
+```
+
+alternatively use `just`
+
+```bash
+just deploy
 ```
 
 > [!IMPORTANT]
