@@ -7,6 +7,7 @@ import "../src/BaseGen.sol";
 // https://hackernoon.com/implementing-the-erc-2981-nft-royalty-standard-with-solidity
 contract BaseGenTest is Test {
     BaseGen public instance;
+    uint256 public constant pricePerMint = 0.01 ether;
 
     function setUp() public {
         address initialOwner = vm.addr(1);
@@ -18,7 +19,7 @@ contract BaseGenTest is Test {
         address receiver = vm.addr(2);
         instance = new BaseGen(initialOwner, name, symbol, contractURI, baseURI, maxSupply, receiver);
         // instance.safeMint(initialOwner);
-        instance.safeMint{value: 0.01 ether}(initialOwner);
+        instance.safeMint{value: pricePerMint}(initialOwner);
         // instance.setMaxSupply(128);
     }
 
@@ -47,6 +48,6 @@ contract BaseGenTest is Test {
 
     function testValue() public view {
         address receiver = vm.addr(2);
-        assertEq(receiver.balance, 0.01 ether);
+        assertEq(receiver.balance, pricePerMint / 2);
     }
 }
