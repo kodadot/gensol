@@ -3,15 +3,17 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract BaseGen is ERC721, ERC721Burnable, Ownable {
+contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
     uint256 private _nextTokenId;
     string private _contractURI;
     string private _generatorURI;
     uint256 private _maxSupply;
+    address private _receiver;
 
     mapping(uint256 tokenId => string) private _tokenURIs;
 
@@ -30,13 +32,16 @@ contract BaseGen is ERC721, ERC721Burnable, Ownable {
         string memory symbol_,
         string memory contractURI_,
         string memory baseURI_,
-        uint256 maxSupply_
+        uint256 maxSupply_,
+        address receiver_
     ) ERC721(name_, symbol_) Ownable(initialOwner) {
         // setContractURI(contractURI_);
         // setMaxSupply(maxSupply_);
         _generatorURI = string.concat(baseURI_, Strings.toHexString(uint160(address(this)), 20), "/");
         _contractURI = contractURI_;
         _maxSupply = maxSupply_;
+        _receiver = receiver_;
+        _setDefaultRoyalty(receiver_, 5e2); // 
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -74,6 +79,11 @@ contract BaseGen is ERC721, ERC721Burnable, Ownable {
         return _maxSupply;
     }
 
+    // function transferOwnership(address newOwner) public override(Ownable) onlyOwner {
+    //     super.transferOwnership(newOwner);
+    //     _setDefaultRoyalty(newOwner, 5e2);
+    // }
+
     // function safeMint(address to, string memory uri) public onlyOwner {
     function safeMint(address to) public payable {
         uint256 tokenId = _nextTokenId++;
@@ -82,18 +92,22 @@ contract BaseGen is ERC721, ERC721Burnable, Ownable {
             revert MintQuantityExceedsMaxSupply(tokenId, _maxSupply);
         }
 
-        // check if msg value is greater than 0.001 eth
-        // if (msg.value >= 0.001 ether) {
+        // check if msg value is greater than 0.001 ether
+        if (msg.value >= 0.0015 ether) {
+            address receiver = _receiver != address(0) ? _receiver : owner();
+            // Split amount to receiver and owner
+            uint256 amount = msg.value / 2;
+            payable(receiver).transfer(amount);
+            payable(owner()).transfer(amount);
+        } else {
+            revert InsufficientFunds(tokenId, msg.value);
+        }
+
+        // if (msg.value > 0) {
         //     payable(owner()).transfer(msg.value);
         // } else {
         //     revert InsufficientFunds(tokenId, msg.value);
         // }
-
-        if (msg.value > 0) {
-            payable(owner()).transfer(msg.value);
-        } else {
-            revert InsufficientFunds(tokenId, msg.value);
-        }
 
         _safeMint(to, tokenId);
         // URI should be random hash generated from address to + tokenId + block.timestamp
@@ -105,7 +119,7 @@ contract BaseGen is ERC721, ERC721Burnable, Ownable {
         return super.tokenURI(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Royalty) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
