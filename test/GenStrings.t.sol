@@ -2,11 +2,11 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import "../src/lib/GenStrings.sol";
 import "forge-std/console2.sol";
+import "../src/lib/GenStrings.sol";
 
 contract GenStringsTest is Test {
-    function testHexString() public {
+    function testHexString() public pure {
         address owner = vm.addr(1);
         uint256 tokenId = 1;
         bytes32 tokenHash = keccak256(abi.encodePacked(owner, tokenId));

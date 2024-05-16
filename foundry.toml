@@ -6,4 +6,8 @@ libs = ["lib"]
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
 [rpc_endpoints]
 testnet = "${TESTNET_RPC_URL}"
-immutable = "${RPC_URL}"
+base = "${RPC_URL}"
+
+[etherscan]
+testnet = { key = "${ETHERSCAN_API_KEY}" }
+base = { key = "${ETHERSCAN_API_KEY}" }

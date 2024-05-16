@@ -17,7 +17,7 @@ contract GenerativeTest is Test {
         instance = new Generative(initialOwner, name, symbol, contractURI, baseURI, maxSupply);
     }
 
-    function testName() public {
+    function testName() public view {
         assertEq(instance.name(), "Generative");
     }
 }
