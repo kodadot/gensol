@@ -26,6 +26,9 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
 
     error InsufficientFunds(uint256 tokenId, uint256 value);
 
+    // https://github.com/ProjectOpenSea/seadrop/blob/main/src/interfaces/ISeaDropTokenContractMetadata.sol
+    error NewMaxSupplyCannotBeLessThenTotalMinted(uint256 newSupply, uint256 totalMinted);
+
     constructor(
         address initialOwner,
         string memory name_,
@@ -69,13 +72,28 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
      * @param newMaxSupply The new max supply to set.
      */
     function setMaxSupply(uint256 newMaxSupply) external onlyOwner {
-        // Ensure the sender is only the owner or contract itself.
+        if (newMaxSupply < _nextTokenId) {
+            revert MintQuantityExceedsMaxSupply(newMaxSupply, _nextTokenId);
+        }
+
         _maxSupply = newMaxSupply;
 
         emit MaxSupplyUpdated(newMaxSupply);
     }
 
+    /**
+     * @dev Returns the approximate value of tokens in existence.
+     * does not include burned tokens.
+     */
+    //  https://github.com/ProjectOpenSea/seadrop/blob/main/src/clones/ERC721ACloneable.sol
     function totalSupply() public view returns (uint256) {
+        return _nextTokenId;
+    }
+
+    /**
+     * @notice Returns the max token supply.
+    */
+    function maxSupply() public view returns (uint256) {
         return _maxSupply;
     }
 
