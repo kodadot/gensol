@@ -106,7 +106,7 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
     function safeMint(address to) public payable {
         uint256 tokenId = _nextTokenId++;
 
-        if (tokenId > _maxSupply) {
+        if (tokenId >= _maxSupply) {
             revert MintQuantityExceedsMaxSupply(tokenId, _maxSupply);
         }
 
