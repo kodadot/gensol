@@ -14,6 +14,7 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
     string private _generatorURI;
     uint256 private _maxSupply;
     address private _receiver;
+    uint256 private _mintPrice = 0.0015 ether;
 
     mapping(uint256 tokenId => string) private _tokenURIs;
 
@@ -28,6 +29,8 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
 
     // https://github.com/ProjectOpenSea/seadrop/blob/main/src/interfaces/ISeaDropTokenContractMetadata.sol
     error NewMaxSupplyCannotBeLessThenTotalMinted(uint256 newSupply, uint256 totalMinted);
+
+    error MintQuantityCannotBeZero();
 
     constructor(
         address initialOwner,
@@ -110,27 +113,52 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
             revert MintQuantityExceedsMaxSupply(tokenId, _maxSupply);
         }
 
-        // check if msg value is greater than 0.001 ether
-        if (msg.value >= 0.0015 ether) {
-            address receiver = _receiver != address(0) ? _receiver : owner();
-            // Split amount to receiver and owner
-            uint256 amount = msg.value / 2;
-            payable(receiver).transfer(amount);
-            payable(owner()).transfer(amount);
-        } else {
+        if (msg.value < _mintPrice) {
             revert InsufficientFunds(tokenId, msg.value);
         }
 
-        // if (msg.value > 0) {
-        //     payable(owner()).transfer(msg.value);
-        // } else {
-        //     revert InsufficientFunds(tokenId, msg.value);
-        // }
+        _splitPayment(msg.value);
 
         _safeMint(to, tokenId);
         // URI should be random hash generated from address to + tokenId + block.timestamp
         // string memory realURI = GenStrings.toHexString(keccak256(abi.encodePacked(to, tokenId, block.timestamp)));
         // _setTokenURI(tokenId, realURI);
+    }
+
+    function safeBatchMint(address to, uint256 quantity) public payable {
+        if (quantity == 0) {
+            revert MintQuantityCannotBeZero();
+        }
+
+        if (_nextTokenId + quantity > _maxSupply) {
+            revert MintQuantityExceedsMaxSupply(_nextTokenId, _maxSupply);
+        }
+
+        uint256 totalCost = _mintPrice * quantity;
+
+        if (msg.value < totalCost) {
+            revert InsufficientFunds(quantity, msg.value);
+        }
+
+        _splitPayment(totalCost);
+
+        uint256 tokenId = _nextTokenId;
+        for (uint256 i = 0; i < quantity; i++) {
+            tokenId++;
+            _safeMint(to, tokenId);
+        }
+
+        _nextTokenId = tokenId;
+    }
+
+    function _splitPayment(uint256 amount) private {
+        if (_receiver != address(0)) {
+            uint256 splitAmount = amount / 2;
+            payable(_receiver).transfer(splitAmount);
+            payable(owner()).transfer(splitAmount);
+        } else {
+            payable(owner()).transfer(amount);
+        }
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
