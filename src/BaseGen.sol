@@ -130,7 +130,10 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
             revert MintQuantityCannotBeZero();
         }
 
-        if (_nextTokenId + quantity > _maxSupply) {
+        uint256 tokenId = _nextTokenId;  // Local variable to reduce storage reads
+        uint256 newTokenId = tokenId + quantity;
+
+        if (newTokenId >= _maxSupply) {
             revert MintQuantityExceedsMaxSupply(_nextTokenId, _maxSupply);
         }
 
@@ -142,12 +145,10 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
 
         _splitPayment(totalCost);
 
-        uint256 tokenId = _nextTokenId;
         for (uint256 i = 0; i < quantity; i++) {
-            tokenId++;
-            _safeMint(to, tokenId);
+            _safeMint(to, tokenId++);
         }
-
+        
         _nextTokenId = tokenId;
     }
 
