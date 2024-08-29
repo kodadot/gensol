@@ -25,7 +25,7 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
     // https://github.com/ProjectOpenSea/seadrop/blob/main/src/lib/ERC721SeaDropStructsErrorsAndEvents.sol
     error MintQuantityExceedsMaxSupply(uint256 tokenId, uint256 maxSupply);
 
-    error InsufficientFunds(uint256 tokenId, uint256 value);
+    error InsufficientFunds(uint256 expected, uint256 value);
 
     // https://github.com/ProjectOpenSea/seadrop/blob/main/src/interfaces/ISeaDropTokenContractMetadata.sol
     error NewMaxSupplyCannotBeLessThenTotalMinted(uint256 newSupply, uint256 totalMinted);
@@ -114,7 +114,7 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
         }
 
         if (msg.value < _mintPrice) {
-            revert InsufficientFunds(tokenId, msg.value);
+            revert InsufficientFunds(_mintPrice, msg.value);
         }
 
         _splitPayment(msg.value);
@@ -140,7 +140,7 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
         uint256 totalCost = _mintPrice * quantity;
 
         if (msg.value < totalCost) {
-            revert InsufficientFunds(quantity, msg.value);
+            revert InsufficientFunds(totalCost, msg.value);
         }
 
         _splitPayment(totalCost);
