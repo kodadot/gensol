@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "./lib/Split.sol";
 
 contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
     uint256 private _nextTokenId;
@@ -47,7 +48,7 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
         _contractURI = contractURI_;
         _maxSupply = maxSupply_;
         _receiver = receiver_;
-        _setDefaultRoyalty(receiver_, 5e2); // 
+        _setDefaultRoyalty(receiver_, 5e2);
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -126,6 +127,10 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
     }
 
     function safeBatchMint(address to, uint256 quantity) public payable {
+        mintWithReferral(to, quantity, address(0));
+    }
+
+    function mintWithReferral(address to, uint256 quantity, address referrer) public payable {
         if (quantity == 0) {
             revert MintQuantityCannotBeZero();
         }
@@ -143,7 +148,7 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
             revert InsufficientFunds(totalCost, msg.value);
         }
 
-        _splitPayment(totalCost);
+        _splitPayment(msg.value, referrer);
 
         for (uint256 i = 0; i < quantity; i++) {
             _safeMint(to, tokenId++);
@@ -153,13 +158,21 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
     }
 
     function _splitPayment(uint256 amount) private {
+        _splitPayment(amount, address(0));
+    }
+
+    function _splitPayment(uint256 amount, address referrer) private {
+        uint256 receiverAmount = amount / 2;
         if (_receiver != address(0)) {
-            uint256 splitAmount = amount / 2;
-            payable(_receiver).transfer(splitAmount);
-            payable(owner()).transfer(splitAmount);
-        } else {
-            payable(owner()).transfer(amount);
+            payable(_receiver).transfer(receiverAmount);
         }
+        if (referrer != address(0) && referrer != _receiver) {
+            (, uint256 referrerAmount) = royaltyInfo(0, amount);
+            if (referrerAmount > 0 && referrerAmount < address(this).balance) {
+                payable(referrer).transfer(referrerAmount);
+            }
+        }
+        payable(owner()).transfer(address(this).balance);
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
