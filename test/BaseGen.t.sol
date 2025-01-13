@@ -34,6 +34,13 @@ contract BaseGenTest is Test {
         string memory baseUri = "https://data.kodadot.xyz/base/";
         string memory scAddress = Strings.toHexString(uint160(address(instance)), 20);
         string memory expected = string.concat(baseUri, scAddress, "/");
+        assertEq(instance.baseURI(), expected);
+    }
+
+    function testTokenUri() public view {
+        string memory baseUri = "https://data.kodadot.xyz/base/";
+        string memory scAddress = Strings.toHexString(uint160(address(instance)), 20);
+        string memory expected = string.concat(baseUri, scAddress, "/");
 
         assertEq(instance.tokenURI(0), string.concat(expected, "0"));
     }
