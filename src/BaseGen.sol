@@ -55,7 +55,7 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
     }
 
     function baseURI() external view returns (string memory) {
-        return _generatorURI;
+        return _baseURI();
     }
 
     // or e.g. "https://external-link-url.com/my-contract-metadata.json";
