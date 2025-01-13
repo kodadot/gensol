@@ -56,27 +56,27 @@ contract BaseBatchGenTest is Test {
     }
 
     function testSafeBatchMintExceedsMaxSupply() public {
+        uint256 quantity = maxSupply + 1;
         uint256 totalCost = pricePerMint * quantity;
-
+        vm.deal(initialOwner, totalCost);
         vm.prank(initialOwner);
-        vm.expectRevert();
-        // vm.expectRevert(abi.encodeWithSelector(instance.MintQuantityExceedsMaxSupply.selector, 0, maxSupply));
+        vm.expectRevert(abi.encodeWithSelector(BaseGen.MintQuantityExceedsMaxSupply.selector, 0, maxSupply));
         instance.safeBatchMint{value: totalCost}(initialOwner, quantity);
     }
 
     function testSafeBatchMintInsufficientFunds() public {
-        uint256 totalCost = pricePerMint * (quantity - 1);
-
+        uint256 totalCost = pricePerMint * (quantity);
+        uint256 totalPaid = pricePerMint * (quantity - 1); // Pay less than the total cost
+        vm.deal(initialOwner, totalPaid);
         vm.prank(initialOwner);
-        vm.expectRevert();
-        // vm.expectRevert(abi.encodeWithSelector(instance.InsufficientFunds.selector, quantity, totalCost));
-        instance.safeBatchMint{value: totalCost}(initialOwner, quantity);
+        vm.expectRevert(abi.encodeWithSelector(BaseGen.InsufficientFunds.selector, totalCost, totalPaid));
+        instance.safeBatchMint{value: totalPaid}(initialOwner, quantity);
     }
 
     function testSafeBatchMintQuantityCannotBeZero() public {
+        vm.deal(initialOwner, pricePerMint);
         vm.prank(initialOwner);
-        vm.expectRevert();
-        // vm.expectRevert(instance.MintQuantityCannotBeZero.selector);
+        vm.expectRevert(BaseGen.MintQuantityCannotBeZero.selector);
         instance.safeBatchMint{value: pricePerMint}(initialOwner, 0);
     }
 }

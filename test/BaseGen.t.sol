@@ -48,6 +48,7 @@ contract BaseGenTest is Test {
     function testValue() public view {
         address receiver = vm.addr(2);
         assertEq(receiver.balance, pricePerMint / 2);
+        assertEq(initialOwner.balance, pricePerMint / 2);
     }
 
     function testTotalSupply() public {
@@ -74,9 +75,12 @@ contract BaseGenTest is Test {
         assertEq(instance.maxSupply(), 256);
         
         // Test changing max supply
+        uint256 newMaxSupply = 128;
         vm.prank(initialOwner);
-        instance.setMaxSupply(128);
-        assertEq(instance.maxSupply(), 128);
+        vm.expectEmit();
+        emit BaseGen.MaxSupplyUpdated(newMaxSupply);
+        instance.setMaxSupply(newMaxSupply);
+        assertEq(instance.maxSupply(), newMaxSupply);
     }
 
     function testMintExceedsMaxSupply() public {
@@ -86,6 +90,8 @@ contract BaseGenTest is Test {
         // Set a new, lower max supply
         uint256 newMaxSupply = 10;
         vm.prank(initialOwner);
+        vm.expectEmit();
+        emit BaseGen.MaxSupplyUpdated(newMaxSupply);
         instance.setMaxSupply(newMaxSupply);
         
         // Verify the new max supply
@@ -112,12 +118,12 @@ contract BaseGenTest is Test {
         // Now try to mint one more token, which should revert
         vm.deal(address(0x789), pricePerMint);
         vm.prank(address(0x789));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(BaseGen.MintQuantityExceedsMaxSupply.selector, newMaxSupply, newMaxSupply));
         instance.safeMint{value: pricePerMint}(address(0x789));
         
         // Try to set max supply lower than current total supply, which should revert
         vm.prank(initialOwner);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(BaseGen.MintQuantityExceedsMaxSupply.selector, newMaxSupply-1, newMaxSupply));
         instance.setMaxSupply(newMaxSupply - 1);
         
         // Verify max supply hasn't changed
@@ -125,6 +131,8 @@ contract BaseGenTest is Test {
         
         // Set max supply back to initial value
         vm.prank(initialOwner);
+        vm.expectEmit();
+        emit BaseGen.MaxSupplyUpdated(initialMaxSupply);
         instance.setMaxSupply(initialMaxSupply);
         
         // Verify max supply has been restored
