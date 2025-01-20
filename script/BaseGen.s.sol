@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "forge-std/Script.sol";
 import "forge-std/console2.sol";
 import "../src/BaseGen.sol";
+import "../src/GenArtFactory.sol";
 
 contract MyScript is Script {
     function run() external {
@@ -18,8 +19,9 @@ contract MyScript is Script {
         string memory baseURI = "https://dyndata.deno.dev/base/content/"; 
         uint256 maxSupply = 64;
         address receiver = 0xE844b2a0a6453250c920BD2b4B7741946aB16C08;
-
-        BaseGen nft = new BaseGen(initialOwner, name, symbol, contractURI, baseURI, maxSupply, receiver);
+        BaseGen baseGen = new BaseGen();
+        GenArtFactory factory = new GenArtFactory(address(baseGen));
+        BaseGen nft = BaseGen(factory.createGenArt(initialOwner, name, symbol, contractURI, baseURI, maxSupply, receiver));
         console2.log("Contract deployed to %s", address(nft));
 
         vm.stopBroadcast();

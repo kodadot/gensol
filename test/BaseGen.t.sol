@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import "../src/BaseGen.sol";
+import "../src/GenArtFactory.sol";
 
 // https://hackernoon.com/implementing-the-erc-2981-nft-royalty-standard-with-solidity
 contract BaseGenTest is Test {
@@ -18,7 +19,9 @@ contract BaseGenTest is Test {
         string memory baseURI = "https://data.kodadot.xyz/base/"; // suffixed with /?hash=
         uint256 maxSupply = 256;
         address receiver = vm.addr(2);
-        instance = new BaseGen(initialOwner, name, symbol, contractURI, baseURI, maxSupply, receiver);
+        BaseGen baseGen = new BaseGen();
+        GenArtFactory factory = new GenArtFactory(address(baseGen));
+        instance = BaseGen(factory.createGenArt(initialOwner, name, symbol, contractURI, baseURI, maxSupply, receiver));
         instance.safeMint{value: pricePerMint}(initialOwner);
     }
 
