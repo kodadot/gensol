@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+
+import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import {ERC721BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+import {ERC721RoyaltyUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721RoyaltyUpgradeable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
+contract BaseGen is Initializable, ERC721Upgradeable, ERC721BurnableUpgradeable, ERC721RoyaltyUpgradeable, OwnableUpgradeable {
     uint256 private _nextTokenId;
     string private _contractURI;
     string private _generatorURI;
@@ -32,15 +34,18 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
 
     error MintQuantityCannotBeZero();
 
-    constructor(
-        address initialOwner,
+    function initialize(address initialOwner,
         string memory name_,
         string memory symbol_,
         string memory contractURI_,
         string memory baseURI_,
         uint256 maxSupply_,
         address receiver_
-    ) ERC721(name_, symbol_) Ownable(initialOwner) {
+    ) initializer public {
+        __ERC721_init(name_, symbol_);
+        __ERC721Burnable_init();
+        __ERC721Royalty_init();
+        __Ownable_init(initialOwner);
         // setContractURI(contractURI_);
         // setMaxSupply(maxSupply_);
         _generatorURI = string.concat(baseURI_, Strings.toHexString(uint160(address(this)), 20), "/");
@@ -48,6 +53,10 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
         _maxSupply = maxSupply_;
         _receiver = receiver_;
         _setDefaultRoyalty(receiver_, 5e2); // 
+    }
+
+    constructor(){
+        _disableInitializers();
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -166,11 +175,11 @@ contract BaseGen is ERC721, ERC721Burnable, ERC721Royalty, Ownable {
         }
     }
 
-    function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override(ERC721Upgradeable) returns (string memory) {
         return super.tokenURI(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Royalty) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721Upgradeable, ERC721RoyaltyUpgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
