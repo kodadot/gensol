@@ -9,6 +9,8 @@ contract GenArtFactory {
     address public baseGen;
     uint256 private _mintPrice = 0.0015 ether;
 
+    event GenArtCreated(address newContract);
+
     constructor(address _baseGen) {
         baseGen = _baseGen;
     }
@@ -33,6 +35,7 @@ contract GenArtFactory {
             receiver,
             _mintPrice
         );
+        emit GenArtCreated(clone);
         return clone;
     }
 }

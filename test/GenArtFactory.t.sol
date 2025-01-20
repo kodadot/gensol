@@ -30,6 +30,10 @@ contract GenArtFactoryTest is Test {
         for (uint256 i = 0; i < quantity; i++) {
             address initialOwner = vm.addr(i+1);
             string memory name = string.concat("Generative", Strings.toString(i));
+
+            vm.expectEmit(true,true,true,false);
+            emit GenArtFactory.GenArtCreated(address(0));
+
             BaseGen instance = BaseGen(factory.createGenArt(initialOwner, name, symbol, contractURI, baseURI, maxSupply, receiver));
 
             // Assert initial state
@@ -55,9 +59,7 @@ contract GenArtFactoryTest is Test {
             assertEq(receiver.balance, expectedBalance*(i+1));
             assertEq(initialOwner.balance, expectedBalance);
         }
-
        
     }
-
 
 }
