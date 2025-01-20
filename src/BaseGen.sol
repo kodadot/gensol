@@ -16,7 +16,7 @@ contract BaseGen is Initializable, ERC721Upgradeable, ERC721BurnableUpgradeable,
     string private _generatorURI;
     uint256 private _maxSupply;
     address private _receiver;
-    uint256 private _mintPrice = 0.0015 ether;
+    uint256 private _mintPrice;
 
     mapping(uint256 tokenId => string) private _tokenURIs;
 
@@ -40,7 +40,8 @@ contract BaseGen is Initializable, ERC721Upgradeable, ERC721BurnableUpgradeable,
         string memory contractURI_,
         string memory baseURI_,
         uint256 maxSupply_,
-        address receiver_
+        address receiver_,
+        uint256 mintPrice_
     ) initializer public {
         __ERC721_init(name_, symbol_);
         __ERC721Burnable_init();
@@ -52,6 +53,7 @@ contract BaseGen is Initializable, ERC721Upgradeable, ERC721BurnableUpgradeable,
         _contractURI = contractURI_;
         _maxSupply = maxSupply_;
         _receiver = receiver_;
+        _mintPrice = mintPrice_;
         _setDefaultRoyalty(receiver_, 5e2); // 
     }
 
